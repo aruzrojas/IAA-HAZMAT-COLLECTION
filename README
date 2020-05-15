@@ -1,0 +1,9 @@
+Nombre: Alexander Ruz Rojas
+Rol: 201673613-1
+Problema: Recolección de materiales peligrosos.
+
+En la carpeta codigo, se encuentra el algoritmo del problema y en la carpeta informe, el archivo .tex y el pdf.
+
+Para ejecutar basta con escribir make y luego ./main.
+Al ejecutar el programa, genera un archivo de texto llamado output.txt, que contiene los resultados por cada instancia (las diferentes zonas).
+
