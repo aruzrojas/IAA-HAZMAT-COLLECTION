@@ -1,0 +1,558 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{float}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+
+\title{Recolecci\'on de materales peligrosos\\
+}
+
+\author{\IEEEauthorblockN{Alexander Ruz Rojas}
+\IEEEauthorblockA{\textit{Departamento de Inform\'atica} \\
+\textit{Universidad T\'ecnica Federico Santa Mar\'ia}\\
+Santiago, Chile \\
+alexander.ruz@sansano.usm.cl}
+
+}
+
+\maketitle
+
+\begin{abstract}
+
+En el presente art\'iculo se presentarar\'a el problema: 'Recolecci\'on de materiales peligrosos', donde se busca que estos materiales sean recogidos y transportados por un conjunto de camiones con un límite de carga cada uno. Dado que los materiales que se transportan est\'an ubicados en lugares distintos y adem\'as tienen un costo de riesgo por ser peligrosos, lo que se busca es minimizar la distancia recorrida por cada camión y además en caso de accidente o situación similar, reducir la población afectada por dicha situación.
+
+\end{abstract}
+
+\begin{IEEEkeywords}
+Recolecci\'on, costo, minimizar, distancia recorrida, poblaci\'on afectada,
+\end{IEEEkeywords}
+
+\section{Introducci\'on}
+
+Muchas empresas requieren o trabajan con carga que desean transportar y contiene materiales que son nocivos, es decir, son perjudiciales para la sociedad y para el medio ambiente, si bien las empresas toman los resguardos necesarios para que el transporte de estos materiales sea lo m\'as seguro posible, siempre existe la posibilidad \cite{b1} de que ocurra un accidente durante el transporte de la carga, lo que provocar\'ia un gran impacto en la poblaci\'on expuesta a riesgos \cite{b2} como: incendio, explosi\'on, fuga qu\'imica o radiaci\'on  de los materiales que estaban siendo transportados. A pesar de que el n\'umero de accidentes es muy bajo en relaci\'on a la cantidad de viajes que se realizan transportando estos materiales. Por esta misma raz\'on, muchos investigadores comenzaron a desarrollar modelos matem\'aticos para poder identificar rutas que le permitan a cada veh\'iculo transportar dichos materiales con el objetivo de que estas rutas sean de bajo riesgo, pero para una empresa el costo de transporte en rutas de bajo riesgo resulta elevado, por lo cual este problema se vuelve multi-objetivo en donde se busca minimizar el costo asociado al transporte y reducir la poblaci\'on en riesgo, dando pesos distintos a cada objetivo dependiendo de la situaci\'on. Para darle a\'un m\'as importancia al problema, estudios desde 1980 afirman \cite{b3} que en Estados Unidos la situaci\'on respecto al transporte de estos materiales se esta agravando, desde ese a\~no m\'as de 55.000 sustancias t\'oxicas fueron fabricados y procesados y al menos 250.000 env\'ios de materiales peligrosos se hacen diariamente y se espera que esto se duplique en al menos 10 a\~nos.
+
+El resto del presente art\'iculo, est\'a organizado de la siguiente manera: la secci\'on 2 contempla el estado del arte en donde se detallar\'an las t\'ecnicas que se han utilizado para resolver este problema, la secci\'on 3 se determinar\'a la t\'ecnica que se utiliz\'o para resolver el problema (tanto el algoritmo como sus componentes), en la secci\'on 4 se dan las caracter\'isticas de las instancias utilizadas, como por ejemplo, cantidad de veh\'iculos, cantidad de materiales peligrosos, etc, en la secci\'on 5 se mostrar\'an los resultados obtenidos para las distintas instancias y en la \'ultima secci\'on se dar\'a a conocer la conclusi\'on del art\'iculo.
+
+\section{Estado del Arte}
+Los primeros estudios relacionados a recolecci\'on de materiales peligrosos datan a principios de la d\'ecada del 80 \cite{b4}, en un extensa investigaci\'on hecha por Gary L. Urbanek y Edward J. Barber, quienes desarrollan un criterio con el fin de designar rutas para el transporte de materiales peligrosos basado en la probabilidad de que ocurra un accidente en una ruta cualquiera, al a\~no 1985, en el art\'iculo \cite{b3} designan rutas para cada cami\'on en base a 4 variables, las cuales son: el n\'umero de eventos peligrosos que ha ocurrido en una ruta, probabilidad de que el material provoque un accidente, poblaci\'on en el radio de riesgo y la cantidad de materiales peligrosos por cada tipo. Al a\'no 1997 \cite{b5} se utiliz\'o un algoritmo llamado optimizaci\'on por colonia de hormigas que fue dise\~nado por Marco Dorigo en el a\~no 1992, quienes utilizaron este algoritmo fueron Richard F. Hartl y Christine Strauss para resolver el problema de enrutamiento de veh\'iculos, este problema es muy similar al visto en este art\'iculo, en una breve descripci\'on trata de que una flota de veh\'iculos con capacidades iguales deben realizar viajes desde una fabrica o lugar similar hacia distintos clientes recolectando distintos materiales, teniendo como objetivo solo reducir el costo de los viajes, ya sea el tiempo o el costo ec\'onomico involucrado, el poder resolver el VRP (problema de enrutamiento de veh\'iculos) con el algoritmo optimizaci\'on por colonia de hormigas fue un gran avance ya que los resultados obtenidos eran mucho mejor que utilizar b\'usqueda local y obten\'ian una diferencia de al menos entre 0-10\% respecto a la mejor soluci\'on. Para el a\~no 2003 \cite{b6} se revisaron distintos modelos presentados para la resoluci\'on del problema de recolecci\'on de materiales peligrosos, los cuales representaban el valor esperado de la consecuencia de que un cami\'on cargado con materiales peligrosos escoja una ruta.
+
+En el a\~no 2010, los autores Rojee  Pradhananga,  Eiichi  Taniguchia y Tadashi  Yamada del art\'iculo \cite{b1} "Ant colony system based routing and scheduling for hazardous material transportation", su enfoque es bastante similar al art\'iculo "Applying  the  ANT  System  to  theVehicle Routing Problem" \cite{b5}, en donde utilizan el algoritmo basado en un sistema de colonia de hormigas para un problema multi-objetivo, a diferencia de VRP que solo era un problema de un \'unico objetivo. 
+
+El algoritmo basado en un sistema de colonia de hormigas, es llamado asi por el comportamiento de las éstas en busca de su comida, al observarlas siempre están en una especie de hilera siguiendo un camino, esto se debe a que van dejando feromonas, que son sustancias qu\'imicas que simulan una firma para no perder el rastro por el que han pasado. Contextualizando el algoritmo para el problema de recolecci\'on de materiales, que es de tipo VRPTW multi-objetivo, es decir, problema de enrutamiento de veh\'iculos con ventana de tiempo con m\'as de un objetivo. La t\'ecnica que que emplea es construir una soluci\'on utilizando una poblaci\'on de hormigas y sus respectivas feromonas, donde estas \'ultimas simulan el objetivo del problema que es reducir costos (ya sean econ\'omicos o de tiempo, etc.) y la poblaci\'on en riesgo. Cada hormiga realiza lo siguiente:
+
+\begin{itemize}
+\item Colocar la hormiga en el dep\'osito, lugar de partida de los veh\'iculos.
+\item Crear todas las rutas posibles desde el lugar actual (ya sea donde un cliente o nodo dep\'osito).
+\item Seleccionar la ruta con el mayor valor de feromonas, las cuales fueron definidas en el paso anterior.
+\item Actualizar el valor de la feromona de la ruta actual.
+\item Actualizar el lugar en que se encuentra la hormiga (ya sea donde un cliente o nodo dep\'osito).
+\item Repetir desde el segundo paso si es que se pueden atender a mas clientes.
+\item Actualizar la cantidad de veh\'iculos disponibles.
+\item Terminar cuando se haya hecho lo mismo con todas las hormigas de la colonia.
+\end{itemize}
+
+Los pasos anteriores se deben repetir si es que a\'un no se alcanza el criterio de t\'ermino, que puede ser un n\'umero de veces que se realizan estos pasos y cada vez que se terminen, se debe actualizar la soluci\'on general aplicando una b\'usqueda local de inserci\'on a cada soluci\'on generada en los pasos anteiores y se actualiza el valor del rastro de feromona global (de la soluci\'on general). 
+
+Este algoritmo da muy buenos resultados muy cercanos a los \'optimos globales, como se hab\'ia mencionado el sistema de colonia de hormigas en un VRP presentaba soluciones entre un 0-10\% de discrepancia respecto a las soluciones \'optimas globales, para este caso que se trataba de un VRP con ventanas de tiempo multi-objetivo, presentaba soluciones entre un 0-10\% de discrepancia respecto a los \'optimos globales, pero la mayor\'ia de los resultados ten\'ia una diferencia entre 0-7\%. Converg\'ia a buenas soluciones en aproximadamente 1000 iteraciones, para una instancia de 50 clientes y utilizando 6 veh\'iculos. Cabe destacar que en ninguna instancia utilizada se lleg\'o al \'optimo global.
+
+En el a\~no 2016 \cite{b2}  Germ\'an Paredes-Belmar, Andr\'es Bronfman, Vladimir Marianov, Guillermo Latorre-N\'u\~nez, propusieron una soluci\'on para este problema, en donde los camiones pod\'ian llevar distintos materiales siempre y cuando estos fueran compatibles entre s\'i, es decir, no hab\'ia peligro alguno si se llevaban combinaciones de \'estos en un mismo veh\'iculo. Para resolver el problema lo que hac\'ian era modelar el problema en un grafo, donde los nodos representan los clientes que buscan que su material sera recogido y transportado sumado al nodo dep\'osito (punto de partida de los veh\'iculos) y los arcos representan las rutas entre los nodos. Si un veh\'iculo transportaba m\'as de un material peligroso, consideraban solo el que tuviera mayor riesgo sobre la poblaci\'on.
+
+El m\'etodo que consideran es asumir un grafo auxiliar en donde todos los nodos estuvieran conectados entre s\'i, incluyendo al nodo dep\'osito y consideran que cada arco tiene distintos pesos asociados a los distintos materiales, es decir, dependiendo del material que transporte el veh\'iculo, se asocia el peso del arco, por lo tanto existen tantos grafos como tipos de materiales para el problema. Como consideran que minimizan la poblaci\'on en riesgo y el costo, el peso de los arcos ya no solo ser\'ia el que tan expuesta esta la poblaci\'on sino que se le agrega el costo, que corresponder\'ia al costo de viajar de un nodo i (un cliente cualquiera) a un nodo j (cliente cualquiera) utilizando ese arco. De la forma en que en este art\'iculo relacionan ambos par\'ametros es la siguiente: 
+
+           \[Z = \alpha \cdot EP + (1 - \alpha) \cdot C\]
+           
+Donde EP, corresponde a la poblaci\'on expuesta y C al costo, $\alpha \in $ [0,1] y corresponde al peso que se le asigna a la poblaci\'on expuesta, es decir, si se considera m\'as o menos su valor frente al costo. 
+
+Por lo tanto para cada arco se obtiene un peso que relaciona la poblaci\'on expuesta y el costo de viajar de un cliente a otro, o del nodo dep\'osito a un cliente (es importante destacar que en este caso no hay poblaci\'on en riesgo, porque no hay material cargado en el veh\'iculo) o de un cliente al nodo dep\'osito. Hecho lo anterior se resuelve el problema minimizando el valor de Z y cumpliendo restricciones, entre las que se destacan:
+
+\begin{itemize}
+    \item No sobrepasar la capacidad de cada veh\'iculo.
+    \item Cada cliente es atendido por un solo veh\'iculo.
+    \item Evitar materiales incompatibles en el mismo veh\'iculo.
+    \item Evitar hacer ciclos entre los viajes del veh\'iculo.
+\end{itemize}
+
+La m\'etrica que utilizan para decidir que arco agregar a la ruta de cada veh\'iculo es a\~nadir el arco que menos contribuya al valor de Z, ya que se quiere minimizar, una vez resuelta la ruta para un veh\'iculo, se actualizan los viajes ya que en la ruta se pudo haber agregado un arco que no exisitiera en el grafo original y dicho arco se actualiza con los arcos disponibles del grafo original.
+\\
+
+\section{T\'ecnica propuesta}
+
+Antes de detallar la resoluci\'on del problema, se definir\'an algunos par\'ametros y variables:
+\\
+
+\textit{$K$}: Conjunto de veh\'iculos.
+
+\textit{$N$}: Conjunto de clientes incluyendo el nodo dep\'osito.
+
+\textit{$N_c$}: Conjunto de clientes sin el nodo dep\'osito.
+
+\textit{$M$}: Conjunto con los tipos de materiales peligrosos.
+
+\textit{$MC$}: Conjunto de cantidad de materiales peligrosos, donde el i-\'esimo elemento corresponde a la cantidad que gener\'o el cliente $n_i \in N$.
+
+\textit{$T$}: Conjunto del par: (nodo cliente, tipo de material peligroso), donde el nodo cliente genera un tipo de material.
+
+\textit{$A$}: Conjunto de arcos (rutas entre los nodos).
+
+\textit{COM}: Conjunto de pares de materiales peligrosos del tipo (m,r) que son compatibles entre s\'i, es decir, un veh\'iculo puede transportar en la misma carga dichos materiales.
+
+\textit{$D_0$}: Lista de distancia desde el nodo dep\'osito hacia los clientes.
+
+\textit{$D_m$}: Matriz de distancia entre los distintos nodos (clientes), si el veh\'iculo transporta el material $m \in M$.
+
+\textit{$R_m$}: Matriz de riesgo entre los distintos nodos (clientes), si el veh\'iculo transporta el material $m \in M$.
+
+\textit{Q}: Capacidad del veh\'iculo.
+\\
+
+
+
+Para la resoluci\'on de este problema se se utilizar\'a el algoritmo Greedy, el cual se caracteriza por ser una estrategia de b\'usqueda local en donde en cada paso escoge la opci\'on de \'optimo local, es decir, busca el beneficio del momento, sin importar lo que ocurri\'o o lo que puede ocurrir. Los componentes necesarios de Greedy para la resoluci\'on de este problema son:
+
+\begin{itemize}
+    \item Representaci\'on de la soluci\'on: Matriz $W$ de 4 dimensiones, que almacena el veh\'iculo utilizado, material que carga, y los arcos utilizados, es decir:
+   \\
+   \begin{equation*}
+        w^{km}_{ij} =     
+    \begin{cases}
+      1, \text{ Si el  veh\'iculo $k$} \in \text{$K$ transporta   el} \\  \text{material $m$} \in \text{$M$} \text{   entre los nodos $i$, $j$} \in \text{$N$}
+      \\
+      0, \text{ en otro caso}
+    \end{cases}
+    \end{equation*}
+    \item Funci\'on Miope: Para cada veh\'iculo escoger el nodo que menos contribuye a la funci\'on evaluaci\'on y que los materiales que carga sean compatibles entre si.
+    \item Punto de partida: Todos los veh\'iculos parten del nodo dep\'osito.
+    \item Funci\'on de evaluaci\'on: Minimizar la relaci\'on entre costo y poblaci\'on expuesta mediante la siguiente expresi\'on.
+    
+    \begin{equation}
+            \text{Min } Z = \sum_{k \in K}^N \sum_{m \in M}^N \sum_{i,j \in A}^N a^{mk}_{ij} \cdot w^{mk}_{ij}
+    \end{equation}
+\end{itemize}
+
+Donde $a^{mk}_{ij} = \alpha \cdot EP^m_{ij} + (1 - \alpha) \cdot c_{ij} $
+\\
+
+Con:
+
+$EP^M_{ij}$: Cantidad de poblaci\'on en riesgo expuesta al material $m$ entre los nodos $i, j$.
+
+$c_{ij}$: Costo de transporte desde el nodo $i$ al nodo $j$.
+
+$\alpha \in [0,1]$
+
+Adem\'as de la variable $w^{km}_{ij}$, se definen dos variables m m\'as las cuales son:
+
+\begin{equation*}
+        x^{k}_{ij} =     
+    \begin{cases}
+      1, \text{ Si el  veh\'iculo $k$} \in \text{$K$ viaja desde el nodo}  \\ \text{$i$ al nodo $j$; $i$, $j$} \in \text{$N$}
+      \\
+      0, \text{ en otro caso}
+    \end{cases}
+    \end{equation*}
+
+\begin{equation*}
+        y^{k}_{i} =     
+    \begin{cases}
+      1, \text{ Si el  veh\'iculo $k$} \in \text{$K$ carga el producto del}  \\ \text{ cliente $i$} \in \text{$N_c$}
+      \\
+      0, \text{ en otro caso}
+    \end{cases}
+    \end{equation*}
+    
+
+$C^{k}_{i}$ = Cantidad de material peligroso que lleva el veh\'iculo $k$  $\in K$ antes de visitar al nodo $i \in N$. Si se est\'a en el nodo dep\'osito,  $C^{k}_{i}$ = 0. 
+\\
+
+\textbf{Restriciones del problema}:
+\\
+
+\textbf{Restricci\'on 1}: No se puede superar la capacidad de carga de los veh\'iculos.
+
+    \begin{equation}
+           \sum_{i \in N_c}  y^{k}_{i} \cdot MC_i \leq Q \qquad \forall \textit{k} \in \textit{K}
+    \end{equation}
+
+\textbf{Restricci\'on 2}: Cada cliente que gener\'o un material debe ser atendido por solo un veh\'iculo, es decir, toda la carga se la lleva un solo veh\'iculo.
+
+    \begin{equation}
+           \sum_{k \in K}  y^{k}_{i} = 1 \qquad \forall \textit{i} \in \textit{N}
+    \end{equation}
+
+\textbf{Restricci\'on 3}: El veh\'iculo puede ser o no ser utilizado.
+
+    \begin{equation}
+           \sum_{j \in N_c}  x^{k}_{0j} \leq 1 \hspace{0.3cm}  \forall \textit{k} \in \textit{K} \text{, 0 representa el nodo dep\'osito.}
+    \end{equation}
+
+\textbf{Restricci\'on 4}: Todos los veh\'iculos que entren a un nodo cliente, deben salir de \'este.
+
+    \begin{equation}
+           \sum_{i \in N_c}  x^{k}_{ij} = \sum_{h \in N_c} x^{k}_{jh} \qquad \forall \textit{$k$} \in \textit{$K$}, \forall \textit{j} \in \textit{$N_c$}
+    \end{equation}
+
+
+\textbf{Restricci\'on 5}: Un veh\'iculo con carga de un material tipo r, no puede salir del nodo i (nodo actual) con un riesgo menor a r.
+
+    \begin{equation}
+           \sum_{j \in N}  w^{km}_{ij} \leq 1 -  y^{k}_{i} \hspace{0.3cm} \forall \textit{$k$} \in \textit{$K$}, \forall \textit{i} \in \textit{$N_c$}, 
+           \textit{ m, r} \in \textit{M}, \textit{(i,r)} \in \textit{T}
+    \end{equation}
+
+\textbf{Restricci\'on 6}: Se evita la combinacion de materiales incompatibles en el mismo veh\'iculo.
+
+    \begin{equation}
+             y^{k}_{i} + y^{k}_{j} \leq 1 \hspace{0.2cm} \forall \textit{$k$} \in \textit{$K$}, \forall \textit{i} \in \textit{$N_c$}, 
+           \textit{(i,m), (j,r)} \in \textit{T}, \textit{(m,r)} \in \textit{COM} 
+    \end{equation}
+
+\textbf{Restricci\'on 7}: Se registra el volumen de materiales despu\'es de que el veh\'iculo haya pasado y recolectado los materiales de un nodo cliente y adem\'as se evita que el veh\'iculo quede atrapado en un sub-tour (ciclos del grafo).
+
+    \begin{equation}
+             C^{k}_{j} \geq C^{k}_{i} + MC_{i} - Q \cdot (1 - x^k_{ij}) \hspace{0.3cm} \forall \textit{$k$} \in \textit{$K$}, \textit{i} \in \textit{$N$}, 
+          \textit{$j$} \in \textit{$N_c$}
+    \end{equation}
+    
+\textbf{Naturaleza de las variables}: 
+    \begin{equation}
+            x^k_{ij}, y^k_i, w^{km}_{ij} \in \{0,1\} \qquad
+            \forall \textit{$k$} \in \textit{$K$}
+            \textit{, i,j} \in \textit{$N$}, \textit{$m$} \in \textit{$M$}
+    \end{equation}
+
+Ya teniendo definido los par\'ametros, variables, restricciones y componentes para el algoritmo Greedy, se detallar\'a el c\'omo se utiliza el algoritmo en el siguiente pseudo-c\'odigo:
+
+\begin{algorithm}
+\caption{Algoritmo Greedy}
+\begin{algorithmic}[1]
+\WHILE{(Clientes con carga)}
+    \FOR {\texttt{(k $\in$ $K$)}}
+        \STATE min $\gets$ min(A)
+        \STATE i,j $\gets$ min
+        \IF {(cliente j no descargado)}
+            \IF {(COMP(Materiales k, material j)}
+                \STATE Visitar y descargar cliente j.
+                \STATE Actualizar funci\'on objetivo
+            \ENDIF
+        \ENDIF
+    \ENDFOR
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+El algoritmo anterior lo que realiza es que por cada veh\'iculo recorre todos los nodos (clientes) posibles, siempre verificando las restricciones y sobre todo si es que el material a cargar es compatible con los materiales que ha cargado el veh\'iculo, en caso de que cumpla las restricciones, es posible cargar dicho material en el veh\'iculo hasta que regresa al nodo dep\'osito y se realiza lo mismo con el siguiente veh\'iculo.
+
+\section{Escenario experimental}
+
+La ejecuci\'on del algoritmo fue realizada en un computador con un procesador AMD Ryzen 52500U (8 CPUs) 2 GHZ, Memoria Ram 16 GB y Sistema Operativo Windows 10, el algoritmofue programado en C++. Lo primero que se realiz\'o es leer el archivo para obtener los datos necesarios para la resoluci\'on del problema. Se utilizan estructuras para los nodos y los veh\'iculos, por cada nodo (cliente), se almacenaban los datos de su id, tipo de material que producen y la carga que producen del material. Para el veh\'iculo en su estrucutra se almacena la capacidad actual, el nodo actual en que se encuentra y la ruta que ha hecho. En matrices se va almacenando la distancia entre todos los nodos y el riesgo de transitar entre todos los nodos para cada material. Se define la matriz $W$, que es la representaci\'on de la soluci\'on del problema, la cual se va construyendo utilizando el algoritmo Greedy con la t\'ecnica descrita en Algorithm 1.
+
+Las instancias que se utilizaron para obtener resultados del algoritmo implementado son las mismas que se utilizaron en el arti\'iculo "Hazardous    materials    collection    withmultiple-product  loading" \cite{b2}. Todas las instancias tienen 5 tipos de materiales, distinta cantidad de veh\'iculos pero todos con la misma capacidad.  Las caracter\'isticas de estos son las siguientes:
+
+\begin{table}[H]
+
+\caption{Datos de cantidad de materiales por tipo en cada zona.}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+\textbf{Instancias}& \# $MC_A$ & \# $MC_B$ & \# $MC_C$ & \# $MC_D$ & \# $MC_E$\\
+ 
+\hline
+Zona 1& 7.640 & 6.680 & 3.040 & 4.260 & 5.720\\
+\hline
+Zona 2& 5.440 & 10.890 & 14.420 & 20.540 & 11.740\\
+\hline
+Zona 3& 8.040 & 2.170 & 4.170 & 4.120 & 1.970\\
+\hline
+Zona 4& 12.440 & 1.840 & 3.560 & 5.940 & 3.390\\
+\hline
+Zona 5& 1.560 & 4.370 & 1.820 & 2.760 & 2.810\\
+\hline
+Zona 6& 5.600 & 3.270 & 6.060 & 2.310 & 3.770 \\
+\hline
+Zona 7& 3.840 & 2.490 & 2.170 & 4.980 & 2.230\\
+\hline
+\end{tabular}
+\label{tab1}
+\end{center}
+\end{table}
+
+
+\begin{table}[H]
+
+\caption{Datos de cantidad de clientes y veh\'iculos disponibles.}
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Instancias}& \# clientes$^{\mathrm{a}}$ & \# veh\'iculos disponibles  \\
+ 
+\hline
+Zona 1& 32 & 3 \\
+\hline
+Zona 2& 36 & 3 \\
+\hline
+Zona 3& 15 & 3 \\
+\hline
+Zona 4& 30 & 5 \\
+\hline
+Zona 5& 21 & 2 \\
+\hline
+Zona 6& 22 & 5 \\
+\hline
+Zona 7& 11& 4 \\
+\hline
+\end{tabular}
+\label{tab1}
+\end{center}
+{$^{\mathrm{a}}$No se considera el nodo dep\'osito.}
+\end{table}
+
+\begin{table}[H]
+\caption{Matriz COM: compatibilidad entre los los materiales y tipo dominante.}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+\textbf{Tipo}& $A$ & $B$ & $C$ & $D$ & $E$\\
+ 
+\hline
+$A$& A & - & C & D & -\\
+\hline
+$B$& - & B & C & D & E\\
+\hline
+$C$& C & C & C & - & E\\
+\hline
+$D$& D & D & - & D & E\\
+\hline
+$E$& - & E & E & E & E\\
+\hline
+\end{tabular}
+\label{tab1}
+\end{center}
+\end{table}
+
+Las tablas I y II muestran las caracter\'isticas de cada instancia, donde cada zona representa una instancia, es decir, un archivo distinto. Las caracter\'isticas a destacar son la cantidad de material peligroso de cada tipo, cantidad de clientes y veh\'iculos disponibles de cada instancia, notar que todos los veh\'iculos tienen la misma capacidad que es de 40.000. La instancia tambi\'en considera las distancias desde el nodo dep\'osito hacia todos los otros nodos (clientes) y matrices de distancia entre los nodos y riesgos entre estos mismos, dependiendo del material que se transporta. Cabe destacar que por cada tipo de material existe una matriz de distancia, ya que el veh\'iculo debe tomar rutas distintas dependiendo del material cargado.
+
+La tabla III muestra la compatibilidad entre los tipos de materiales, es decir, cada tipo de material puede ser o no compatible respecto a los otros. En el caso de que un veh\'iculo cargue m\'as de un tipo de material que sean compatibles entre s\'i, se considera un solo riesgo para efectos de la resoluci\'on. 
+\newpage
+
+\section{Resultados obtenidos}
+
+Los resultados que se obtuvieron fueron los siguientes:
+\begin{table}[H]
+\caption{Resultados Zona 1}
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Valor de}&\multicolumn{3}{|c|}{\textbf{Zona 1}} \\
+\cline{2-4} 
+\textbf{$\alpha$} & \textbf{\textit{EP}}& \textbf{\textit{Costo}}& \textbf{\textit{Total}} \\
+\hline
+0&720758&251070&251070\\ \hline
+0.1&774124&230909&285230\\ \hline
+0.2&779856&265883&368678\\ \hline
+0.3&743176&244543&394133\\ \hline
+0.4&743176&244543&443996\\ \hline
+0.5&714655&243756&479206\\ \hline
+0.6&669255&246992&500350\\ \hline
+0.7&669255&246992&542576\\ \hline
+0.8&649695&269899&573736\\ \hline
+0.9&692518&270909&650357\\ \hline
+1&693136&296740&693136\\ \hline
+\end{tabular}
+\label{tab1}
+\end{center}
+\end{table}
+
+\begin{table}[H]
+\caption{Resultados Zona 2}
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Valor de}&\multicolumn{3}{|c|}{\textbf{Zona 2}} \\
+\cline{2-4} 
+\textbf{$\alpha$} & \textbf{\textit{EP}}& \textbf{\textit{Costo}}& \textbf{\textit{Total}} \\
+\hline
+0&$1,32\cdot10^6$&180709&180709\\ \hline
+0.1&$1,38\cdot10^6$&148268&271499\\ \hline
+0.2&$1,37\cdot10^6$&155890&399744\\ \hline
+0.3&$1,2\cdot10^6$&177531&508436\\ \hline
+0.4&$1,28\cdot10^6$&177531&618737\\ \hline
+0.5&$1,27\cdot10^6$&177358&727356\\ \hline
+0.6&$1,27\cdot10^6$&177358&837356\\ \hline
+0.7&$1,27\cdot10^6$&181362&943700\\ \hline
+0.8&$1,27\cdot10^6$&181362&$1\cdot10^6$\\ \hline
+0.9&$1,28\cdot10^6$&181267&$1,1\cdot10^6$\\ \hline
+1&$1,28\cdot10^6$&181267&$1,28\cdot10^6$\\ \hline
+\end{tabular}
+\label{tab1}
+\end{center}
+\end{table}
+
+\begin{table}[H]
+\caption{Resultados Zona 3}
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Valor de}&\multicolumn{3}{|c|}{\textbf{Zona 3}} \\
+\cline{2-4} 
+\textbf{$\alpha$} & \textbf{\textit{EP}}& \textbf{\textit{Costo}}& \textbf{\textit{Total}} \\
+\hline
+0&529093&101398&101398\\ \hline
+0.1&541412&103814&147574\\ \hline
+0.2&541412&103814&191334\\ \hline
+0.3&610098&108108&258705\\ \hline
+0.4&610098&108108&308904\\ \hline
+0.5&610098&108108&359103\\ \hline
+0.6&540566&102644&365397\\ \hline
+0.7&540566&102644&409189\\ \hline
+0.8&540566&102644&452982\\ \hline
+0.9&540566&102644&496774\\ \hline
+1&540566&102644&540566\\ \hline
+\end{tabular}
+\label{tab1}
+\end{center}
+\end{table}
+
+\begin{table}[H]
+\caption{Resultados Zona 4}
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Valor de}&\multicolumn{3}{|c|}{\textbf{Zona 4}} \\
+\cline{2-4} 
+\textbf{$\alpha$} & \textbf{\textit{EP}}& \textbf{\textit{Costo}}& \textbf{\textit{Total}} \\
+\hline
+0&$1,3\cdot 10^6$&116003&116003\\ \hline
+0.1&$1,2\cdot10^6$&116988&232407\\ \hline
+0.2&$1,2\cdot10^6$&116988&347826\\ \hline
+0.3&$1,2\cdot10^6$&116988&463244\\ \hline
+0.4&$1,2\cdot10^6$&116988&578663\\ \hline
+0.5&$1,2\cdot10^6$&116988&694082\\ \hline
+0.6&$1,2\cdot10^6$&116988&809501\\ \hline
+0.7&$1\cdot10^6$&121867&755369\\ \hline
+0.8&$1\cdot10^6$&121867&845869\\ \hline
+0.9&$1\cdot10^6$&121867&936370\\ \hline
+1&$1\cdot10^6$&121867&$1\cdot10^6$\\ \hline
+\end{tabular}
+\label{tab1}
+\end{center}
+\end{table}
+
+\begin{table}[H]
+\caption{Resultados Zona 5}
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Valor de}&\multicolumn{3}{|c|}{\textbf{Zona 5}} \\
+\cline{2-4} 
+\textbf{$\alpha$} & \textbf{\textit{EP}}& \textbf{\textit{Costo}}& \textbf{\textit{Total}} \\
+\hline
+0&743405&95376&95376\\ \hline
+0.1&744408&96714&161483\\ \hline
+0.2&744408&96714&226253\\ \hline
+0.3&744408&96714&291022\\ \hline
+0.4&744408&96714&355792\\ \hline
+0.5&744408&96714&420561\\ \hline
+0.6&744408&96714&485330\\ \hline
+0.7&744408&96714&550100\\ \hline
+0.8&744408&96714&614869\\ \hline
+0.9&744408&96714&679639\\ \hline
+1&744408&96714&744408\\ \hline
+\end{tabular}
+\label{tab1}
+\end{center}
+\end{table}
+
+\begin{table}[H]
+\caption{Resultados Zona 6}
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Valor de}&\multicolumn{3}{|c|}{\textbf{Zona 6}} \\
+\cline{2-4} 
+\textbf{$\alpha$} & \textbf{\textit{EP}}& \textbf{\textit{Costo}}& \textbf{\textit{Total}} \\
+\hline
+0&572766&100148&100148\\ \hline
+0.1&572766&100148&147410\\ \hline
+0.2&572766&100148&194672\\ \hline
+0.3&572766&100148&241933\\ \hline
+0.4&572766&100148&289195\\ \hline
+0.5&572766&100148&336457\\ \hline
+0.6&572766&100148&383719\\ \hline
+0.7&572766&100148&430981\\ \hline
+0.8&570503&100878&476578\\ \hline
+0.9&577863&103864&530463\\ \hline
+1&577863&103864&577863\\ \hline
+\end{tabular}
+\label{tab1}
+\end{center}
+\end{table}
+
+\begin{table}[H]
+\caption{Resultados Zona 7}
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Valor de}&\multicolumn{3}{|c|}{\textbf{Zona 7}} \\
+\cline{2-4} 
+\textbf{$\alpha$} & \textbf{\textit{EP}}& \textbf{\textit{Costo}}& \textbf{\textit{Total}} \\
+\hline
+0&367366&114720&114720\\ \hline
+0.1&367366&114720&139985\\ \hline
+0.2&367366&114720&165249\\ \hline
+0.3&367366&114720&190514\\ \hline
+0.4&367366&114720&215778\\ \hline
+0.5&367366&114720&241043\\ \hline
+0.6&367366&114720&266308\\ \hline
+0.7&367366&114720&291572\\ \hline
+0.8&367366&114720&316837\\ \hline
+0.9&367366&114720&342101\\ \hline
+1&367366&114720&367366\\ \hline
+\end{tabular}
+\label{tab1}
+\end{center}
+\end{table}
+
+Las tablas IV a X, representan los resultados obtenidos a partir de la ejecuci\'on del algoritmo Greedy implementado en este problema. Por cada tabla que representa una zona distinta, se muestran los valores de poblaci\'on expuesta, costo de viaje y el total, en donde solo en la columna del total se realiza la ecuaci\'on que considera alfa (1). 
+
+
+
+
+\section{Conclusiones}
+
+
+La propuesta del algoritmo que se refleja en los resultados result\'o ser positiva, si se comparan los resultados con los obtenidos en el art\'iculo \cite{b2}, las diferencias no son muy grandes, si bien en todas las variaciones de $\alpha$ en las distintas zonas, el art\'iculo citado obtuvo mejores resultados, hay que tener en cuenta que el algoritmo utilizado en este ocasi\'on construye la soluci\'on buscando el beneficio en el momento, por lo que estas decisiones pueden acotar una decisi\'on en el futuro, teniendo valores muy altos para la funci\'on objetivo y perjudicarla. 
+En cuanto a tiempo de ejecuci\'on, no fue considerado, ya que en la totalidad de ejecuciones demoraba mucho menos de un segundo, casi inst\'antaneo. Este problema puede ser abordado por otro algoritmo y es muy probable que los resultados sean mejores a los obtenidos y adem\'as es posible cambiar el modelo del problema, en espec\'ifico la funci\'on objetivo, tal como lo realizan en \cite{b1}, donde adem\'as de tener un par\'ametro m\'as en la funci\'on objetivo, buscan distintas formas de relacionarlas y buscar la m\'as \'optima.
+
+\begin{thebibliography}{00}
+\bibitem{b1} Rojee Pradhananga, Eiichi Taniguchia, Tadashi Yamada, "Ant colony system based routing and scheduling for hazardous
+material transportation". Department of Urban Management, Kyoto University, Katsura campus C-1, Kyoto 615-8540, Japan, pp. 1-8, 2010.
+
+\bibitem{b2} Germ\'an Paredes-Belmar, Andr\'es Bronfman, Vladimir Marianov, Guillermo Latorre-N\'u\~nez, "Hazardous materials collection with multiple-product loading", Pontificia Universidad Cat\'olica de Chile, Universidad Andres Bello, Chile, pp 1-7, 2016.
+
+\bibitem{b3} K. David Pijawka, Steve Foote, and Andy Soesilo, "Improving Transportation of Hazardous Materials Through Risk Assessment and Routing", WASHINGTON, D. C., EE.UU, pp 1-10, 1985.
+
+\bibitem{b4} Gary L. Urbanek and Edward J. Barber, "Development of criteria to designate routes for transporting hazardous materials", Washington, D.C., EE UU, pp 1-3, 1980.
+
+
+\bibitem{b5} Richard F. Hartl, Christine Strauss, "Applying the ANT System to the Vehicle Routing Problem", University of Vienna, France, pp 1-3 1997.
+
+\bibitem{b6} Erhan Erkut, Armann Ingolfsson "Transport Risk Models for Hazardous Materials: Revisited", University of Alberta, pp 1-3, 2003.
+
+
+
+\bibitem{b7} M. Young, The Technical Writer's Handbook. Mill Valley, CA: University Science, 1989.
+\end{thebibliography}
+\vspace{12pt}
+
+
+\end{document}
